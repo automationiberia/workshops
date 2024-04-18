@@ -1,4 +1,20 @@
 ---
+- name: Remove the AWX dns entries when teardown
+  vars:
+    ec2_wait: false
+    teardown: true
+    s3_state: absent
+    state: absent
+    debug_teardown: false
+  hosts: localhost
+  tasks:
+    - name: add dns entires for student awx node
+      ansible.builtin.include_role:
+        name: ../../roles/aws_dns_awx
+      when:
+        - dns_type is defined
+        - dns_type == "aws"
+
 - name: run AWX on awx host
   hosts: awx_nodes
   become: true
@@ -118,11 +134,17 @@
     filetree_controller_schedules: *filetree_controller_path
     filetree_controller_roles: *filetree_controller_path
   pre_tasks:
+    - debug: var=inventory_hostname
+    - debug: var=ansible_hostname
+    - debug:
+        msg: "{{ lookup('pipe', 'ls -lart /tmp') }}"
     - name: "Remove the /tmp/checkout path"
       ansible.builtin.file:
         path: /tmp/checkout
         state: absent
 
+    - debug:
+        msg: "{{ lookup('pipe', 'ls -lart /tmp') }}"
     - name: "Create the /tmp/checkout path"
       ansible.builtin.file:
         path: /tmp/checkout

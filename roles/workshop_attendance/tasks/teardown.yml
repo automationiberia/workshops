@@ -20,7 +20,7 @@
     zone: "{{workshop_dns_zone}}"
     record: "login.{{ec2_name_prefix|lower}}.{{workshop_dns_zone}}"
     type: A
-    value: "{{ (records | first | first)['Value'] }}"
+    value: "{{ (records | first | first)['value'] }}"
   vars:
-    records: '{{record_sets.ResourceRecordSets | selectattr("Name", "match", "login" + "." + ec2_name_prefix|lower + "." + workshop_dns_zone) | map(attribute="ResourceRecords") | list }}'
+    records: '{{record_sets.resource_record_sets | selectattr("name", "match", "login" + "." + ec2_name_prefix|lower + "." + workshop_dns_zone) | map(attribute="resource_records") | list }}'
   when: records | length > 0

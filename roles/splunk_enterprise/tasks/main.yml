@@ -22,10 +22,10 @@
         zone: "{{workshop_dns_zone}}"
         record: "student{{item}}.{{ec2_name_prefix|lower}}.{{workshop_dns_zone}}"
         type: A
-        value: "{{ (records | first | first)['Value'] }}"
+        value: "{{ (records | first | first)['value'] }}"
       loop: "{{ range(1, student_total|int + 1)|list }}"
       vars:
-        records: '{{record_sets.ResourceRecordSets | selectattr("Name", "match", "student" + item|string + "." + ec2_name_prefix|lower + "." + workshop_dns_zone) | map(attribute="ResourceRecords") | list }}'
+        records: '{{record_sets.resource_record_sets | selectattr("name", "match", "student" + item|string + "." + ec2_name_prefix|lower + "." + workshop_dns_zone) | map(attribute="resource_records") | list }}'
       when: records
   when: teardown
 

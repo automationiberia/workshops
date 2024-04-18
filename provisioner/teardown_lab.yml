@@ -52,6 +52,12 @@
         - automation_hub is defined
         - automation_hub|bool
 
+- name: Include workshop_type unique setup roles
+  ansible.builtin.import_playbook: "{{ playbook_dir }}/workshop_specific/{{ workshop_type }}.yml"
+  vars:
+    teardown: true
+    state: absent
+
 - name: Destroy lab instances in AWS
   hosts: localhost
   connection: local
