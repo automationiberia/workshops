@@ -1,12 +1,12 @@
 ---
 - name: Remove the AWX dns entries when teardown
+  hosts: localhost
   vars:
     ec2_wait: false
     teardown: true
     s3_state: absent
     state: absent
     debug_teardown: false
-  hosts: localhost
   tasks:
     - name: add dns entires for student awx node
       ansible.builtin.include_role:
@@ -20,6 +20,8 @@
   hosts: awx_nodes
   become: true
   gather_facts: true
+  vars:
+    s3_state: present
   tags:
     - awx
   tasks:
