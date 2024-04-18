@@ -26,7 +26,6 @@
     private_ip: "{{ item.private_ip_address }}"
     groups:
       - awx_nodes
-      - managed_nodes
   with_items: "{{ awx_node_facts.instances }}"
 
 # - name: Ensure group automation_hub is removed

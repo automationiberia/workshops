@@ -40,7 +40,7 @@
         name: ../roles/manage_ec2_instances
 
 - name: Wait for all nodes to have SSH reachability
-  hosts: "managed_nodes:control_nodes:attendance"
+  hosts: "managed_nodes:control_nodes:attendance:awx_nodes"
   become: true
   gather_facts: false
 
