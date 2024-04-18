@@ -1,9 +1,9 @@
 [automationcontroller]
 {{ short_name }} ansible_connection=local
 
+{% if automationhub is defined and automationhub | bool %}
 [automationhub]
-
-[database]
+{% endif %}
 
 [servicescatalog_workers]
 
@@ -11,9 +11,16 @@
 {{ short_name }} ansible_connection=local
 
 [all:vars]
-controller_admin_password='{{ admin_password }}'
-controller_pg_host={{ short_name }}
-controller_pg_password='{{admin_password}}'
+admin_password='{{ admin_password }}'
+pg_host={{ short_name }}
+pg_port=5432
+pg_password='{{ admin_password }}'
+
+{% if automationhub is defined and automationhub | bool %}
+automationhub_admin_password='{{ admin_password }}'
+automationhub_pg_host={{ short_name }}
+automationhub_pg_password='{{ admin_password }}'
+{% endif %}
 
 postgresql_admin_username=postgres
 postgresql_admin_password='{{ admin_password }}'

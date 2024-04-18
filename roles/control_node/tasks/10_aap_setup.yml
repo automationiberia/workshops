@@ -1,14 +1,17 @@
 ---
-- name: Create tmp directory to store AAP tar.gz
-  ansible.builtin.tempfile:
-    state: directory
-    suffix: "aapbundle"
-  register: tempdir
+# - name: Create tmp directory to store AAP tar.gz
+#   ansible.builtin.tempfile:
+#     state: directory
+#     suffix: "aapbundle"
+#   register: tempdir
 
 - name: Copy AAP tar.gz
   ansible.builtin.copy:
     src: "{{ aap_archive | default(playbook_dir + '/aap.tar.gz') }}"
     dest: "{{ tempdir.path }}/aap.tar.gz"
+  vars:
+    tempdir:
+      path: "/tmp/"
 
 - name: Create directory for automation controller
   ansible.builtin.file:
@@ -21,6 +24,9 @@
     dest: "{{ aap_dir }}"
     remote_src: true
     extra_opts: ['--strip-components=1', '--show-stored-names']
+  vars:
+    tempdir:
+      path: "/tmp/"
 
 # - name: Set AAP local repository on controller node
 #   ansible.builtin.yum_repository:

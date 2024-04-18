@@ -35,7 +35,7 @@
 
 - name: run the Automation Controller installer
   become: true
-  become_user: ec2-user
+  # become_user: ec2-user
   environment:
     ANSIBLE_COLLECTIONS_PATH: "{{ aap_dir }}/collections"
   shell: "{{ controller_install_command }}"
@@ -63,39 +63,39 @@
   debug:
     msg: '{{ check2.json }}'
 
-# - name: load license block
-#   block:
-#     - name: check for base64 variable first
-#       copy:
-#         dest: '{{ playbook_dir }}/manifest.zip'
-#         content: '{{ base64_manifest | b64decode }}'
-#       delegate_to: localhost
-#       become: false
-#       when: base64_manifest is defined
-#     - name: unable to load base64_manifest
-#       debug:
-#         msg: 'No base64_manifest variable found, trying to open manifest.zip'
-#       when: base64_manifest is undefined
-#     - name: Load manifest into variable
-#       local_action:
-#         module: slurp
-#         src: "{{ playbook_dir }}/manifest.zip"
-#       register: manifest_file
-#       become: false
+- name: load license block
+  block:
+    - name: check for base64 variable first
+      copy:
+        dest: '{{ playbook_dir }}/manifest.zip'
+        content: '{{ base64_manifest | b64decode }}'
+      delegate_to: localhost
+      become: false
+      when: base64_manifest is defined
+    - name: unable to load base64_manifest
+      debug:
+        msg: 'No base64_manifest variable found, trying to open manifest.zip'
+      when: base64_manifest is undefined
+    - name: Load manifest into variable
+      local_action:
+        module: slurp
+        src: "{{ playbook_dir }}/manifest.zip"
+      register: manifest_file
+      become: false
 
-# - name: Post manifest file
-#   uri:
-#     url: https://localhost/api/v2/config/
-#     method: POST
-#     user: admin
-#     password: "{{ admin_password }}"
-#     body: '{ "eula_accepted": true, "manifest": "{{ manifest_file.content }}" }'
-#     body_format: json
-#     validate_certs: false
-#     force_basic_auth: true
-#   register: license_controller
-#   until: license_controller is not failed
-#   retries: 5
+- name: Post manifest file
+  uri:
+    url: https://localhost/api/v2/config/
+    method: POST
+    user: admin
+    password: "{{ admin_password }}"
+    body: '{ "eula_accepted": true, "manifest": "{{ manifest_file.content }}" }'
+    body_format: json
+    validate_certs: false
+    force_basic_auth: true
+  register: license_controller
+  until: license_controller is not failed
+  retries: 5
 
 ## Execution environments
 - name: create container registry credential

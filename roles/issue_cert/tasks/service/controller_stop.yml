@@ -1,18 +1,39 @@
 ---
-# - name: make sure Automation Controller is stopped
-#   service:
-#     name: automation-controller.service
-#     state: stopped
-#   register: stop_controller
-#   until: stop_controller is not failed
-#   retries: 5
+- name: Check if there exists the service 'automation-controller.service'
+  become: true
+  become_user: "{{ run_commands_user }}"
+  command:
+    cmd: "systemctl status automation-controller.service"
+  changed_when: false
+  failed_when: false
+  register: automation_controller_service
 
-- name: Make sure Automation Controller is stopped
+- name: "debug the automation_controller_service"
+  ansible.builtin.debug:
+    var: automation_controller_service
+
+- name: Make sure Automation Controller service is stopped
+  ansible.builtin.service:
+    name: "{{ service_to_start }}"
+    state: stopped
+  loop:
+    - postgresql.service
+    - automation-controller.service
+  loop_control:
+    loop_var: service_to_start
+  register: stop_controller
+  until: stop_controller is not failed
+  retries: 5
+  when: automation_controller_service.rc != 4
+
+- name: Make sure Automation Controller container is stopped
   become: true
   become_user: "{{ run_commands_user }}"
   containers.podman.podman_container:
     name: automation-controller-web
     state: stopped
-  register: install_controller
-  until: install_controller is not failed
+  register: stop_controller
+  until: stop_controller is not failed
   retries: 5
+  when: automation_controller_service.rc == 4
+

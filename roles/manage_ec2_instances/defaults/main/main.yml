@@ -339,6 +339,18 @@ ec2_info:
     architecture: x86_64
     filter: 'RHEL-8*HVM-*Hourly*'
     username: ec2-user
+  rhel9_awx:
+    owners: 309956199498
+    size: m5a.xlarge
+    os_type: linux
+    disk_volume_type: gp3
+    disk_space: 40
+    disk_iops: 3000
+    disk_throughput: 125
+    architecture: x86_64
+    filter: 'RHEL-9*HVM-*Hourly*'
+    username: ec2-user
+
 debug_teardown: false
 
 # Issue #1594

@@ -69,6 +69,11 @@
               - "{{ dns_information }}"
               - "The Lets Encrypt certbot failed for the controller node, please check https://letsencrypt.status.io/ to make sure the service is running"
 
+    - name: Make sure /home/{{ run_commands_user }}/aap/controller/etc directory exists
+      ansible.builtin.file:
+        path: /home/{{ run_commands_user }}/aap/controller/etc
+        state: directory
+
     - name: Move SSL Key
       copy:
         remote_src: true

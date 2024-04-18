@@ -4,21 +4,48 @@
     msg: "run_commands_user: {{ run_commands_user }}"
 
 - name: check normal user
-  debug: 
+  debug:
     msg: "{{ ansible_user_id }}"
 
 - name: run whoami command
   become: true
   become_user: "{{ run_commands_user }}"
-  command: 
+  command:
     cmd: "whoami"
   register: whoami
 
 - name: debug the whoami user
-  debug: 
+  debug:
     msg: "{{ whoami }}"
 
-- name: Make sure Automation Controller is online before changing base URL
+- name: Check if there exists the service 'automation-controller.service'
+  become: true
+  become_user: "{{ run_commands_user }}"
+  command:
+    cmd: "systemctl status automation-controller.service"
+  changed_when: false
+  failed_when: false
+  register: automation_controller_service
+
+- name: "debug the automation_controller_service"
+  ansible.builtin.debug:
+    var: automation_controller_service
+
+- name: Make sure Automation Controller service is online before changing base URL
+  ansible.builtin.service:
+    name: "{{ service_to_start }}"
+    state: started
+  loop:
+    - postgresql.service
+    - automation-controller.service
+  loop_control:
+    loop_var: service_to_start
+  register: controller_online
+  until: controller_online is not failed
+  retries: 5
+  when: automation_controller_service.rc != 4
+
+- name: Make sure Automation Controller container is online before changing base URL
   become: true
   become_user: "{{ run_commands_user }}"
   containers.podman.podman_container:
@@ -27,6 +54,7 @@
   register: controller_online
   until: controller_online is not failed
   retries: 5
+  when: automation_controller_service.rc == 4
 
 - name: set password
   block:

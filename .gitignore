@@ -16,6 +16,7 @@ bak/
 instructor_inventory.txt
 provisioner/tower_license.json
 provisioner/manifest.zip
+provisioner/input.yaml
 network_vars.yml
 ansible/
 *.box

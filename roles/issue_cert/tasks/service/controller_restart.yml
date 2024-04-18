@@ -1,8 +1,30 @@
 ---
-# - name: Try restarting automation controller
-#   service:
-#     name: automation-controller.service
-#     state: restarted
+- name: Check if there exists the service 'automation-controller.service'
+  become: true
+  become_user: "{{ run_commands_user }}"
+  ansible.builtin.command:
+    cmd: "systemctl status automation-controller.service"
+  changed_when: false
+  failed_when: false
+  register: automation_controller_service
+
+- name: "debug the automation_controller_service"
+  ansible.builtin.debug:
+    var: automation_controller_service
+
+- name: Try restarting automation controller (and postgresql)
+  ansible.builtin.service:
+    name: "{{ service_to_start }}"
+    state: restarted
+  loop:
+    - postgresql.service
+    - automation-controller.service
+  loop_control:
+    loop_var: service_to_start
+  register: install_controller
+  until: install_controller is not failed
+  retries: 5
+  when: automation_controller_service.rc != 4
 
 - name: Restart automation-controller-web container
   become: true
@@ -13,3 +35,5 @@
   register: install_controller
   until: install_controller is not failed
   retries: 5
+  when: automation_controller_service.rc == 4
+...
