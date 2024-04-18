@@ -137,6 +137,7 @@
     filetree_controller_schedules: *filetree_controller_path
     filetree_controller_roles: *filetree_controller_path
   pre_tasks:
+    - debug: var=groups['awx_nodes']
     - debug: var=inventory_hostname
     - debug: var=ansible_hostname
     - debug:
@@ -153,6 +154,10 @@
         path: /tmp/checkout
         state: directory
 
+    - debug:
+        msg: "{{ lookup('pipe', 'ls -lart /tmp') }}"
+    - debug:
+        msg: "{{ lookup('pipe', 'ip -br a') }}"
     - name: "Clone the git repository with the base to be populated into the AWX instance"
       ansible.builtin.git:
         repo: 'https://github.com/automationiberia/migrate-awx-to-controller.git'

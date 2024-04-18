@@ -3,7 +3,7 @@
 
 - name: ControllerMigrationCasC | Launch Instance (block)
   block:
-    - name: ControllerMigrationCasC | Launch AWX Instance
+    - name: ControllerMigrationCasC | Launch AWX Instances
       amazon.aws.ec2_instance:
         key_name: "{{ ec2_name_prefix }}-key"
         security_group: "{{ ec2_security_group }}"
@@ -50,7 +50,7 @@
     - debug:
         msg: "{{ awx_output }}"
 
-- name: Ensure tags are present for AWX node
+- name: Ensure tags are present for AWX nodes
   amazon.aws.ec2_tag:
     region: "{{ ec2_region }}"
     resource: "{{ item.1.instance_id }}"
@@ -59,6 +59,8 @@
       Name: "{{ ec2_name_prefix }}-student{{ item.0 + 1 }}-awx"
       Index: "{{ item[0] }}"
       Student: "student{{ item.0 + 1 }}"
+      short_name: "student{{ item.0 + 1 }}_awx"
+      long_name: "student{{ item.0 + 1 }}_awx.{{ ec2_name_prefix }}.{{ workshop_dns_zone | default('') }}"
       launch_time: "{{ item.1.launch_time }}"
   with_indexed_items:
     - "{{ awx_output.instances }}"
