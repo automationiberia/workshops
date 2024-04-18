@@ -59,8 +59,8 @@
       Name: "{{ ec2_name_prefix }}-student{{ item.0 + 1 }}-awx"
       Index: "{{ item[0] }}"
       Student: "student{{ item.0 + 1 }}"
-      short_name: "student{{ item.0 + 1 }}_awx"
-      long_name: "student{{ item.0 + 1 }}_awx.{{ ec2_name_prefix }}.{{ workshop_dns_zone | default('') }}"
+      short_name: "student{{ item.0 + 1 }}.awx"
+      long_name: "student{{ item.0 + 1 }}.awx.{{ ec2_name_prefix }}.{{ workshop_dns_zone | default('') }}"
       launch_time: "{{ item.1.launch_time }}"
   with_indexed_items:
     - "{{ awx_output.instances }}"
