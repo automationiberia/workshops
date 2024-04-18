@@ -14,6 +14,7 @@
       when:
         - dns_type is defined
         - dns_type == "aws"
+	- teardown | bool
 
 - name: run AWX on awx host
   hosts: awx_nodes
