@@ -20,7 +20,7 @@
     record: "student{{item}}.awx.{{ec2_name_prefix|lower}}.{{workshop_dns_zone}}"
     type: A
     value: "{{ (records | first | first)['value'] }}"
-  loop: "{{ range(1, student_total + 1)|list }}"
+  loop: "{{ range(1, (student_total | int) + 1)|list }}"
   vars:
     records: '{{ record_sets.resource_record_sets | selectattr("name", "match", "student" + item|string + ".awx." + ec2_name_prefix|lower + "." + workshop_dns_zone) | map(attribute="resource_records") | list }}'
   when: records | length > 0
@@ -33,7 +33,7 @@
     record: "student{{item}}.awx.{{ec2_name_prefix|lower}}.{{workshop_dns_zone}}"
     type: A
     value: "{{ (records | first | first)['value'] }}"
-  loop: "{{ range(1, student_total + 1)|list }}"
+  loop: "{{ range(1, (student_total | int) + 1)|list }}"
   vars:
     records: '{{ record_sets.resource_record_sets | selectattr("name", "match", "student" + item|string + ".awx." + ec2_name_prefix|lower + "." + workshop_dns_zone) | map(attribute="resource_records") | list }}'
   when: records | length > 0
@@ -54,7 +54,7 @@
     record: "student{{item}}-sat.{{ec2_name_prefix|lower}}.{{workshop_dns_zone}}"
     type: A
     value: "{{ (records | first | first)['value'] }}"
-  loop: "{{ range(1, student_total + 1)|list }}"
+  loop: "{{ range(1, (student_total | int) + 1)|list }}"
   vars:
     records: '{{record_sets_sat.resource_record_sets  | selectattr("name", "match", "student" + item|string + "-sat." + ec2_name_prefix|lower + "." + workshop_dns_zone) | map(attribute="resource_records") | list }}'
   when: records | length > 0
